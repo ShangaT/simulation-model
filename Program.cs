@@ -16,7 +16,6 @@ namespace Model
     {
         static void Main(string[] args)
         {
-            
             double lambda = 0.037;
             double mu = 0.005;
             double nu = 0.015;
@@ -26,11 +25,11 @@ namespace Model
             double sumCh = 0;
             double Next = 0;
             double timeMod = 0;
-                        
+
             bool QueueFree = true;
             double timeQueue = 0;
             int scoreQueue = 0;
-            
+
             Channel[] ArrayChannels = new Channel[n]; //массив для каналов
             for (int i = 0; i < n; i++)
             {
@@ -50,7 +49,7 @@ namespace Model
             while (Next < 1000000)
             {
                 Random RND = new Random();
-                double timeNext = -(1 / lambda) * Math.Log(RND.NextDouble()); //время до появление следующей заявки                
+                double timeNext = -(1 / lambda) * Math.Log(RND.NextDouble()); //время до появление следующей заявки
 
                 if (countFreeChannels() != 0) //проверяем свободные каналы
                 {
@@ -86,7 +85,7 @@ namespace Model
                                 {
                                     ArrayChannels[i].free = false;
                                     ArrayChannels[i].halp = l - 1;
-                                    ArrayChannels[i].timeService = timeService; //время обслуживания заявки                     
+                                    ArrayChannels[i].timeService = timeService; //время обслуживания заявки
                                     ArrayChannels[i].timeRelease = timeService + timeMod;
                                     break;
                                 }
@@ -129,10 +128,10 @@ namespace Model
                     {
                         if (ArrayChannels[i].timeService == ArrayChannels[i + 1].timeService && ArrayChannels[i].timeService == ArrayChannels[i + 2].timeService)
                         {
-                            ArrayChannels[i].timeService = -(1 / (mu + eta)) * Math.Log(RND.NextDouble()); // отрываем один канал                            
+                            ArrayChannels[i].timeService = -(1 / (mu + eta)) * Math.Log(RND.NextDouble()); // отрываем один канал
                             ArrayChannels[i].timeRelease = timeMod + ArrayChannels[i].timeService;
                             ArrayChannels[i].halp = 1;
-                                                        
+
                             double timeSrvice =  (-(1 / ((l - 1) * mu + eta)) * Math.Log(RND.NextDouble()));
 
                             ArrayChannels[i + 1].timeService = timeSrvice;
@@ -146,10 +145,10 @@ namespace Model
                         }
                         if (ArrayChannels[i].timeService == ArrayChannels[i + 1].timeService && ArrayChannels[i].timeService != ArrayChannels[i + 2].timeService)
                         { //ищем l-1 каналов обслуживающие одну заявку
-                            ArrayChannels[i].timeService = -(1 / (mu + eta)) * Math.Log(RND.NextDouble()); // отрываем один канал                            
+                            ArrayChannels[i].timeService = -(1 / (mu + eta)) * Math.Log(RND.NextDouble()); // отрываем один канал
                             ArrayChannels[i].timeRelease = timeMod + ArrayChannels[i].timeService;
                             ArrayChannels[i].halp = 1;
-                                                       
+
                             double timeSrvice =  (-(1 / ((l - 1) * mu + eta)) * Math.Log(RND.NextDouble()));
 
                             ArrayChannels[i + 1].timeService = timeSrvice;
@@ -159,9 +158,9 @@ namespace Model
                         }
                         else //если все каналы работают без взаимопомощи
                         {
-                            if (QueueFree == true)//проверяем места в очереди 
+                            if (QueueFree == true)//проверяем места в очереди
                             {
-                                QueueFree = false; //ставим заявку в очередь                        
+                                QueueFree = false; //ставим заявку в очередь
                                 scoreQueue++;
                                 timeQueue = timeMod;
                             }
@@ -183,8 +182,8 @@ namespace Model
                     if (timeMod >= ArrayChannels[i].timeRelease)
                     {
                         if (QueueFree == false)
-                        {                           
-                            QueueFree = true; //осовбождаем место в очереди 
+                        {
+                            QueueFree = true; //осовбождаем место в очереди
                             timeQueue = 0;
 
                             ArrayChannels[i].halp = 1;
@@ -198,7 +197,7 @@ namespace Model
                 for (int i = 0; i < n; i++) // освобождение каналов
                 {
                     if (timeMod >= ArrayChannels[i].timeRelease || ArrayChannels[i].timeService > 1 / eta)
-                    {                        
+                    {
                         ArrayChannels[i].free = true;
                         ArrayChannels[i].halp = 0;
                         ArrayChannels[i].timeService = 0;
@@ -207,8 +206,8 @@ namespace Model
                 }
 
                 sumCh += n - countFreeChannels();
-            } //конец основного цикла       
-                        
+            } //конец основного цикла
+
             double p = sumCh / Next / n;
             double r = scoreQueue / Next; //средняя длинна очереди
             double t = r / lambda;
@@ -218,5 +217,4 @@ namespace Model
             Console.WriteLine($"Среднее время нахождения заявки в очереди = {t}");
         }
     }
-
 }
